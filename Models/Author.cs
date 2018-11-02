@@ -1,7 +1,7 @@
 ﻿
 namespace Libro.Models
 {
-    class Author : ModelBase<Author>
+    public class Author : ModelBase<Author>
     {
         private string _firstname;
         

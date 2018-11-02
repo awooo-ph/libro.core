@@ -97,6 +97,7 @@
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\IModel.cs" />
     <Compile Include="Models\ModelBase.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Takeout.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\User.cs" />
