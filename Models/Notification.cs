@@ -13,6 +13,19 @@ namespace Libro.Models
             return false;
         }
 
+        private bool _Read;
+        
+        public bool Read
+        {
+            get => _Read;
+            set
+            {
+                if (value == _Read) return;
+                _Read = value;
+                OnPropertyChanged(nameof(Read));
+            }
+        }
+        
         private string _Title;
 
         public string Title
