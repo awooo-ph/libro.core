@@ -69,8 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
-    <Compile Include="ConfigBase.cs" />
     <Compile Include="Data\Connection.cs" />
     <Compile Include="Data\DbColumn.cs" />
     <Compile Include="Data\DbTable.cs" />
