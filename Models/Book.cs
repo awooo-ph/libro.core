@@ -60,6 +60,17 @@ namespace Libro.Models
             }
         }
 
+        public static long GetNextNumber()
+        {
+            var accession = Cache.OrderByDescending(x =>
+            {
+                long.TryParse(x.AccessionNumber, out var number);
+                return number;
+            }).FirstOrDefault()?.AccessionNumber;
+            long.TryParse(accession, out var nextNumber);
+            return ++nextNumber;
+        }
+
         private string _condition;
 
         public string Condition
