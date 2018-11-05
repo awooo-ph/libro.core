@@ -120,13 +120,17 @@ namespace Libro.Models
         }
 
         private static Dictionary<Type, ObservableCollection<T>> _cache = new Dictionary<Type, ObservableCollection<T>>();
+        private static object _cacheLock = new object();
         public static ObservableCollection<T> GetAll()
         {
-            if (_cache.ContainsKey(typeof(T)))
-                return _cache[typeof(T)];
-            var list = new ObservableCollection<T>(Db.GetAll<T>());
-            _cache.Add(typeof(T),list);
-            return list;
+            lock (_cacheLock)
+            {
+                if (_cache.ContainsKey(typeof(T)))
+                    return _cache[typeof(T)];
+                var list = new ObservableCollection<T>(Db.GetAll<T>());
+                _cache.Add(typeof(T), list);
+                return list;
+            }
         }
 
         public static ObservableCollection<T> Cache => GetAll();
