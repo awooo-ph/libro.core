@@ -1,18 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Libro.Data;
 
 namespace Libro.Models
 {
     public class Notification:ModelBase<Notification>
     {
+        public enum NotificationTypes
+        {
+            TakeoutExpired,
+            Others
+        }
+
         protected override bool GetIsEmpty()
         {
             return false;
         }
+        
+        private static bool _dbTypeSet;
 
+
+        private NotificationTypes _NotificationType = NotificationTypes.Others;
+
+        public NotificationTypes NotificationType
+        {
+            get => _NotificationType;
+            set
+            {
+                if (value == _NotificationType) return;
+                _NotificationType = value;
+                OnPropertyChanged(nameof(NotificationType));
+            }
+        }
+
+        private string _Thumbnail;
+
+        public string Thumbnail
+        {
+            get => _Thumbnail;
+            set
+            {
+                if (value == _Thumbnail) return;
+                _Thumbnail = value;
+                OnPropertyChanged(nameof(Thumbnail));
+                OnPropertyChanged(nameof(HasThumbnail));
+            }
+        }
+
+        public bool HasThumbnail => !string.IsNullOrEmpty(Thumbnail) && File.Exists(Thumbnail);
+        
         private bool _Read;
         
         public bool Read
@@ -52,6 +92,19 @@ namespace Libro.Models
             }
         }
 
+        private long _RecordId;
+
+        public long RecordId
+        {
+            get => _RecordId;
+            set
+            {
+                if (value == _RecordId) return;
+                _RecordId = value;
+                OnPropertyChanged(nameof(RecordId));
+            }
+        }
+        
         private DateTime _Created = DateTime.Now;
 
         public DateTime Created
