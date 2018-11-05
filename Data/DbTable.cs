@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Libro.Models;
 
 namespace Libro.Data
 {
@@ -148,9 +149,21 @@ namespace Libro.Data
             sql.Append(");");
             return sql.ToString();
         }
+
+        private static Dictionary<Type, string> _dbTypes = new Dictionary<Type, string>();
+
+        public static void AddType(Type type, string dbType)
+        {
+            if (!_dbTypes.ContainsKey(type))
+                _dbTypes.Add(type, dbType);
+            else
+                _dbTypes[type] = dbType;
+        }
         
         private static string GetDbType(Type type)
         {
+            if (_dbTypes.ContainsKey(type)) return _dbTypes[type];
+
             if(type == typeof(string))
                 return "TEXT";
             if(type == typeof(int))
@@ -171,7 +184,8 @@ namespace Libro.Data
                 return "INTEGER";
             if (type == typeof(DateTime?))
                 return "DATETIME";
-            
+            if (type == typeof(Notification.NotificationTypes))
+                return "INT";
             throw new Exception("Unknow type");
         }
 
