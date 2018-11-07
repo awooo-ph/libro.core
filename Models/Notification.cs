@@ -37,6 +37,10 @@ namespace Libro.Models
             }
         }
 
+        private Takeout _takeout;
+        public Takeout Takeout => _takeout ?? (NotificationType==NotificationTypes.TakeoutExpired ? _takeout = Takeout.GetById(RecordId):null);
+        public Borrower Borrower => Takeout?.Borrower;
+
         private string _Thumbnail;
 
         public string Thumbnail
