@@ -37,8 +37,10 @@ namespace Libro.Models
         {
             if (!CanSave(null)) return;
             Db.SaveItem((T) this);
-            if(!Cache.Contains((T)this))
+            if (!Cache.Contains((T) this))
+            {
                 Cache.Add((T)this);
+            }
         }
 
         public virtual void Update<TT>(string column, TT value)
@@ -81,11 +83,11 @@ namespace Libro.Models
             return true;
         }
 
-        public virtual void Delete()
+        public virtual void Delete(bool permanent=false)
         {
-            if (_cache.ContainsKey(GetType()))
-            Db.Delete<T>(Id);
-            _cache[GetType()].Remove((T)this);
+            //if (_cache.ContainsKey(GetType()))
+            Db.Delete<T>(Id,permanent);
+            Cache.Remove((T)this);
         }
         
         private long _id;
@@ -119,18 +121,18 @@ namespace Libro.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
         }
 
-        private static Dictionary<Type, ObservableCollection<T>> _cache = new Dictionary<Type, ObservableCollection<T>>();
-        private static object _cacheLock = new object();
+        //private static Dictionary<Type, ObservableCollection<T>> _cache = new Dictionary<Type, ObservableCollection<T>>();
+        //private static object _cacheLock = new object();
+        private static ObservableCollection<T> _cache;
         public static ObservableCollection<T> GetAll()
         {
-            lock (_cacheLock)
-            {
-                if (_cache.ContainsKey(typeof(T)))
-                    return _cache[typeof(T)];
-                var list = new ObservableCollection<T>(Db.GetAll<T>());
-                _cache.Add(typeof(T), list);
-                return list;
-            }
+            //lock (_cacheLock)
+            //{
+                if (_cache!=null)
+                    return _cache;
+                _cache = new ObservableCollection<T>(Db.GetAll<T>());
+                return _cache;
+            //}
         }
 
         public static ObservableCollection<T> Cache => GetAll();
