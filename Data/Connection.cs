@@ -149,7 +149,7 @@ namespace Libro.Data
             {
                 c.Parameters.AddWithValue($"@{col.Name}", obj[col.Name]);
             }
-
+            
             return (long) c.ExecuteScalar();
         }
         private static Dictionary<Type,SQLiteCommand> _updateCommands = new Dictionary<Type, SQLiteCommand>();
@@ -242,7 +242,9 @@ namespace Libro.Data
             if (model.Id > 0)
                 model.Update();
             else
+            {
                 model.Id = model.Insert();
+            }
             model.OnSaved();
         }
 
@@ -301,13 +303,14 @@ namespace Libro.Data
             return DbType.Object;
         }
         
-        internal static void Delete<T>(long id) where T : ModelBase<T>
+        internal static void Delete<T>(long id, bool permanent = false) where T : ModelBase<T>
         {
             if (id == 0) return;
             var table = GetTable<T>();
             var c = Connection.CreateCommand();
             //c.CommandText = $"DELETE FROM {table.Name} WHERE [Id]=@Id;";
             c.CommandText = $"UPDATE [{table.Name}] SET IsDeleted=@d WHERE [Id]=@id;";
+            if (permanent) c.CommandText = $"DELETE FROM {table.Name} WHERE [Id]=@id;";
             c.Parameters.AddWithValue("@d", true);
             c.Parameters.AddWithValue($"@Id",id);
             c.ExecuteNonQuery();
