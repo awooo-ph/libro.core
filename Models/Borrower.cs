@@ -107,7 +107,13 @@ namespace Libro.Models
 
         [Ignore]
         public bool IsNew => Id==0;
-        
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Borrower b)) return false;
+            return b.Id == Id;
+        }
+
         protected override string GetErrorInfo(string prop)
         {
             switch (prop)
