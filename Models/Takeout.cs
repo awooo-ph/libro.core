@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Libro.Data;
 
 namespace Libro.Models
@@ -15,7 +16,10 @@ namespace Libro.Models
         public long BookId { get; set; }
 
         public long BorrowerId { get; set; }
-        
+
+        [Ignore] public Borrower Borrower => Borrower.Cache.FirstOrDefault(x=>x.Id == BorrowerId);
+
+        [Ignore] public Book Book => Book.Cache.FirstOrDefault(x => x.Id == BookId);
         
         private bool _isReturned;
         /// <summary>
@@ -31,7 +35,7 @@ namespace Libro.Models
                 OnPropertyChanged();
             }
         }
-
+        
         private string _returnNote;
         /// <summary>
         /// Notes or remarks when the book was returned.
@@ -217,7 +221,8 @@ namespace Libro.Models
             {
                 Returned = default(DateTime);
             }
-            Db.SaveItem(this);
+            base.Save();
+            //Db.SaveItem(this);
         }
         
         protected override bool GetIsEmpty()
@@ -308,6 +313,12 @@ namespace Libro.Models
         {
             return !Equals(left, right);
         }
-        
+
+        public static List<Takeout> GetUnpaidByBorrower(long? id)
+        {
+            if((id ?? 0) == 0) return new List<Takeout>();
+
+            return Db.Where<Takeout>("BorrowerId=@id AND NOT Paid AND IsReturned", new Dictionary<string, object>() { { "id", id } });
+        }
     }
 }
