@@ -9,6 +9,7 @@ namespace Libro
         HOME_SelectedIndexChanged,
         HOME_RETURN_BookNotBorrowed,
         HOME_CloseScreen,
-        SessionChanged
+        SessionChanged,
+        SettingsChanged
     }
 }
