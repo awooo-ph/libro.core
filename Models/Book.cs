@@ -607,11 +607,17 @@ namespace Libro.Models
             }
         }
 
-        private long _borrowerId;
-
+        private long? _borrowerId;
+        [Ignore]
         public long TakeoutId
         {
-            get { return _borrowerId; }
+            get
+            {
+                if (_borrowerId != null) return _borrowerId.Value;
+                var takeout = Takeout.GetByBook(Id).LastOrDefault(x => !x.IsReturned);
+                _borrowerId = takeout?.Id ?? 0L;
+                return _borrowerId.Value;
+            }
             set
             {
                 if (value == _borrowerId) return;

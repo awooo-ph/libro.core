@@ -261,7 +261,7 @@ namespace Libro.Models
         public static Takeout GetById(long id)
         {
             if(id == 0) return null;
-            return Db.GetById<Takeout>(id);
+            return Cache.FirstOrDefault(x => x.Id == id);
         }
 
         public static double GetRatingByBook(long id)
@@ -318,7 +318,7 @@ namespace Libro.Models
         {
             if((id ?? 0) == 0) return new List<Takeout>();
 
-            return Db.Where<Takeout>("BorrowerId=@id AND NOT Paid AND IsReturned", new Dictionary<string, object>() { { "id", id } });
+            return Db.Where<Takeout>("BorrowerId=@id AND NOT Paid AND IsReturned AND Penalty>0", new Dictionary<string, object>() { { "id", id } });
         }
     }
 }
