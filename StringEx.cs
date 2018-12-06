@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 
 namespace Libro
 {
@@ -7,13 +8,13 @@ namespace Libro
         public static string StripNonNumeric(this string s)
         {
             const string numbers = "0123456789";
-            var n = "";
-            for (var i = 0; i < s.Length; i++)
+            var sb = new StringBuilder();
+            foreach (var t in s)
             {
-                if (numbers.Contains(s[i]))
-                    n += s[i];
+                if (numbers.Contains(t))
+                    sb.Append(t);
             }
-            return n;
+            return sb.ToString();
         }
     }
 }
