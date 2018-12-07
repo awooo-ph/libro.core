@@ -114,6 +114,11 @@ namespace Libro.Models
             return b.Id == Id;
         }
 
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
         protected override string GetErrorInfo(string prop)
         {
             switch (prop)
