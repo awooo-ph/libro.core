@@ -323,5 +323,18 @@ namespace Libro.Data
         }
 
 
+        public static List<string> Distinct<T>(string column) where T:ModelBase<T>
+        {
+            var c = Connection.CreateCommand();
+            c.CommandText = $"SELECT DISTINCT({column}) FROM {GetTable<T>().Name}";
+            var list = new List<string>();
+            var r = c.ExecuteReader();
+            while (r.Read())
+            {
+                list.Add(r[0].ToString());
+            }
+            r.Close();
+            return list;
+        }
     }
 }
