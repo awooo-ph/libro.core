@@ -176,7 +176,7 @@ namespace Libro.Data
                 return "DOUBLE";
             if(type == typeof(bool))
                 return "BOOLEAN";
-            if (type == typeof(Enum))
+            if (type == typeof(Enum) || type.IsEnum)
                 return "INT";
             if (type == typeof(int?))
                 return "INT";
