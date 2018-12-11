@@ -33,6 +33,24 @@ namespace Libro.Models
             }
         }
 
+        public bool HasCourse => DepartmentType == Departments.College;
+
+        private Departments _DepartmentType;
+
+        public Departments DepartmentType
+        {
+            get => _DepartmentType;
+            set
+            {
+                if (value == _DepartmentType) return;
+                _DepartmentType = value;
+                OnPropertyChanged(nameof(DepartmentType));
+                OnPropertyChanged(nameof(IsStudent));
+                OnPropertyChanged(nameof(HasCourse));
+                OnPropertyChanged(nameof(Course));
+            }
+        }
+        
         private string _norsuId="";
         
         public string SchoolId
@@ -50,7 +68,7 @@ namespace Libro.Models
 
         public string Course
         {
-            get { return _course; }
+            get => HasCourse ? _course : DepartmentType.ToString();
             set
             {
                 if (value == _course) return;
@@ -90,20 +108,11 @@ namespace Libro.Models
         [Ignore]
         public string Fullname => $"{Lastname}, {Firstname}";
 
-        private bool _isStudent;
+        private bool _isStudent = true;
         /// <summary>
         /// Whether this borrower is a student or a faculty member.
         /// </summary>
-        public bool IsStudent
-        {
-            get { return _isStudent; }
-            set
-            {
-                if (value == _isStudent) return;
-                _isStudent = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool IsStudent => DepartmentType!=Departments.Faculty;
 
         [Ignore]
         public bool IsNew => Id==0;
@@ -132,14 +141,14 @@ namespace Libro.Models
                 case nameof(Lastname):
                     return string.IsNullOrEmpty(Lastname) ? "Lastname is required." : null;
                 case nameof(Course):
-                    return string.IsNullOrEmpty(Course) && IsStudent ? "Course is required." : null;
+                    return string.IsNullOrEmpty(Course) && HasCourse ? "Course is required." : null;
             }
             return base.GetErrorInfo(prop);
         }
 
         protected override bool GetIsEmpty()
         {
-            return string.IsNullOrEmpty(Firstname) || string.IsNullOrEmpty(Lastname) || (string.IsNullOrEmpty(Course) && IsStudent) || string.IsNullOrEmpty(Barcode);
+            return string.IsNullOrEmpty(Firstname) || string.IsNullOrEmpty(Lastname) || (string.IsNullOrEmpty(Course) && HasCourse) || string.IsNullOrEmpty(Barcode);
         }
 
         private string _barcode="";
