@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Libro.Data;
 
 namespace Libro.Models
 {
+    public enum Departments
+    {
+        Elementary,
+        HighSchool,
+        College,
+        Faculty
+    }
+
     public class Book : ModelBase<Book>
     {
         public Book()
@@ -476,6 +486,32 @@ namespace Libro.Models
                 if (value == _section) return;
                 _section = value;
                 OnPropertyChanged();
+            }
+        }
+
+        private Departments _DepartmentType;
+
+        public Departments DepartmentType
+        {
+            get => _DepartmentType;
+            set
+            {
+                if (value == _DepartmentType) return;
+                _DepartmentType = value;
+                OnPropertyChanged(nameof(DepartmentType));
+            }
+        }
+
+        private string _Department;
+
+        public string Department
+        {
+            get => _Department;
+            set
+            {
+                if (value == _Department) return;
+                _Department = value;
+                OnPropertyChanged(nameof(Department));
             }
         }
 
