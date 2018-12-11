@@ -188,14 +188,57 @@ namespace Libro.Data
             c.ExecuteNonQuery();
         }
 
+        private static void InsertColumn(DbTable table, DbColumn column)
+        {
+            ExecuteNonQuery($"ALTER TABLE [{table.Name}] ADD COLUMN [{column.Name}] {column.DbType};");
+        }
+
+        internal static void ExecuteNonQuery(string sql, Dictionary<string, object> param = null)
+        {
+            try
+            {
+                var c = Connection.CreateCommand();
+                c.CommandText = sql;
+                if (param != null)
+                    foreach (var o in param)
+                    {
+                        c.Parameters.AddWithValue($"@{o.Key}", o.Value);
+                    }
+                c.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                //
+            }
+
+        }
+
         private static T CreateFromReader<T>(SQLiteDataReader reader, DbTable table) where T: ModelBase<T>
         {
             var model = TypeAccessor.Create(typeof(T));
             var obj = model.CreateNew();
             foreach (var dbColumn in table.Columns)
             {
+                if (reader.GetOrdinal(dbColumn.Name) < 0)
+                {
+                    InsertColumn(table, dbColumn);
+                    continue;
+                }
+
                 if (reader[dbColumn.Name] != DBNull.Value)
-                    model[obj, dbColumn.Name] = dbColumn.Cast(reader[dbColumn.Name]);
+                {
+                    var v = dbColumn.GetValue(reader[dbColumn.Name]);
+                    try
+                    {
+                        model[obj, dbColumn.Name] = v;
+                    }
+                    catch (Exception e)
+                    {
+                        dynamic m = obj;
+                        m[dbColumn.Name] = v;
+                    }
+
+                }
             }
             return (T) obj;
         }
