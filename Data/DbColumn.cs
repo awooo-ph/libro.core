@@ -24,6 +24,19 @@ namespace Libro.Data
             if (o is long) return 0L;
             return o;
         }
+
+        public object GetValue(object o)
+        {
+            if (o != null) return o;
+            if (Type.IsEnum) return 0;
+            if (Type == typeof(string)) return string.Empty;
+            if (Type == typeof(double)) return 0f;
+            if (Type == typeof(long)) return 0L;
+            if (Type == typeof(int)) return 0;
+            if (Type == typeof(bool)) return false;
+
+            return null;
+        }
     }
 
     class ColumnAttribute : Attribute
