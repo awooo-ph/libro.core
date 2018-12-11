@@ -17,7 +17,7 @@ namespace Libro.Models
 
         public long BorrowerId { get; set; }
 
-        [Ignore] public Borrower Borrower => Borrower.Cache.FirstOrDefault(x=>x.Id == BorrowerId);
+        [Ignore] public Borrower Borrower => Models.Borrower.Cache.FirstOrDefault(x=>x.Id == BorrowerId);
 
         [Ignore] public Book Book => Book.Cache.FirstOrDefault(x => x.Id == BookId);
         
@@ -210,19 +210,16 @@ namespace Libro.Models
         {
             if (IsReturned)
             {
-                var returned = Returned.ToString("d");
-                DateTime date;
-                if (DateTime.TryParse($"{Returned.ToString("d")} {ReturnTime.ToString("HH:mm:ss tt")}", out date))
+                if (DateTime.TryParse($"{Returned:d} {ReturnTime:HH:mm:ss tt}", out var date))
                 {
                     Returned = date;
                 }
             }
             else
             {
-                Returned = default(DateTime);
+                Returned = default;
             }
             base.Save();
-            //Db.SaveItem(this);
         }
         
         protected override bool GetIsEmpty()
