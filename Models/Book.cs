@@ -728,5 +728,31 @@ namespace Libro.Models
         {
             return Barcode == value || Isbn == value || Isbn13 == value || Issn == value;
         }
+        
+        public static List<(string Title, long Usage, string Picture)> GetTopTitle(long count = 10)
+        {
+            if (count == 0) count = 10;
+            var list = new List<(string Isbn,long Usage, string Picture)>();
+            var c = Db.Connection.CreateCommand();
+            c.CommandText = $@"
+SELECT 
+    Books.Thumbnail AS Thumbnail,
+    Books.Isbn AS Isbn, 
+    Books.Title AS Title, 
+    COUNT(*) AS Usage 
+FROM Takeouts 
+JOIN Books ON Takeouts.BookId=Books.Id
+GROUP BY Books.Isbn
+ORDER BY Usage DESC
+LIMIT 0, {count};";
+            var r = c.ExecuteReader();
+            while (r.Read())
+            {
+                long.TryParse(r["Usage"].ToString(), out var usage);
+                list.Add((r["Title"].ToString(), usage,r["Thumbnail"].ToString()));
+            }
+
+            return list;
+        }
     }
 }

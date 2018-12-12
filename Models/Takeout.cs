@@ -114,7 +114,7 @@ namespace Libro.Models
                 OnPropertyChanged();
             }
         }
-
+        
         private DateTime _takeoutDate;
 
         public DateTime TakeoutDate
@@ -219,7 +219,10 @@ namespace Libro.Models
             {
                 Returned = default;
             }
+
+            var insert = Id == 0;
             base.Save();
+            if(insert) DailyUsage.GetByDate(TakeoutDate.Date).Increment(Borrower.DepartmentType);
         }
         
         protected override bool GetIsEmpty()

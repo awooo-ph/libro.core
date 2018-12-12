@@ -24,8 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Libro.Core.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,8 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Libro.Core.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CryptStr.Fody, Version=1.0.45.0, Culture=neutral, processorArchitecture=MSIL">
@@ -98,6 +96,7 @@
     <Compile Include="Models\BookEnums.cs" />
     <Compile Include="Models\Borrower.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\DailyUsage.cs" />
     <Compile Include="Models\IModel.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Notification.cs" />
@@ -112,6 +111,7 @@
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Libro.Core.ruleset" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

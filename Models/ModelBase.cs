@@ -26,7 +26,9 @@ namespace Libro.Models
         private void _Save(object obj)
         {
             Save();
+            OnSaved();
         }
+
 
         public void Remove()
         {
@@ -107,7 +109,7 @@ namespace Libro.Models
             }
         }
 
-        internal void OnSaved()
+        internal virtual void OnSaved()
         {
             OnPropertyChanged(nameof(Id));
         }

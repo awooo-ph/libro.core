@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Libro.Data;
 
 namespace Libro.Models
@@ -190,6 +191,31 @@ namespace Libro.Models
         public static Borrower GetById(long borrowerId)
         {
             return Db.GetById<Borrower>(borrowerId);
+        }
+
+        public static List<(string Title, long Usage)> GetTopList(long count = 10)
+        {
+            if (count == 0) count = 10;
+            var list = new List<(string Isbn, long Usage)>();
+            var c = Db.Connection.CreateCommand();
+            c.CommandText = $@"
+SELECT 
+    Borrowers.Id AS Id, 
+    Borrowers.Firstname || "" "" || Borrowers.Lastname AS Title, 
+    COUNT(*) AS Usage 
+FROM Takeouts 
+JOIN Borrowers ON Takeouts.BorrowerId=Borrowers.Id
+GROUP BY Borrowers.Id
+ORDER BY Usage DESC
+LIMIT 0, {count};";
+            var r = c.ExecuteReader();
+            while (r.Read())
+            {
+                long.TryParse(r["Usage"].ToString(), out var usage);
+                list.Add((r["Title"].ToString(), usage));
+            }
+
+            return list;
         }
     }
 }
