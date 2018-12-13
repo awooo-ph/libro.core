@@ -47,16 +47,15 @@ namespace Libro {
 
         public bool CanExecute(object parameter)
         {
-            //try
-            //{
-         
+            try
+            {
                 if (parameter!=null && typeof(T) != parameter.GetType()) return false;
                 return _canExecute != null && _canExecute((T)parameter);
-            //}
-            //catch (Exception)
-            //{
-              //  return false;
-            //}
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void Execute(object parameter)
@@ -73,7 +72,7 @@ namespace Libro {
         public void Destroy()
         {
             _canExecute = _ => false;
-            _execute = _ => { return; };
+            _execute = _ => { };
         }
 
         private static bool DefaultCanExecute(T parameter)
