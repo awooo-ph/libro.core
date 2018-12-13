@@ -10,7 +10,7 @@ namespace Libro.Models
             get
             {
                 if (_categories != null) return _categories;
-                _categories = new List<string>()
+                _categories = new List<string>
                 {
                     "Arts","Computers","Bibliographies","Library",
                 };
