@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using Libro.Annotations;
 
 namespace Libro {
     
@@ -14,27 +10,11 @@ namespace Libro {
 
         public static Messenger Default => _defaultMessenger ?? (_defaultMessenger = new Messenger());
 
-        private MessageToActionMap _messageToActionMap = new MessageToActionMap();
-
-
-        [Conditional("DEBUG")]
-        private void VerifyParameterType(Messages message, Type parameterType)
-        {
-            Type prevRegisteredType = null;
-            if (_messageToActionMap.TryGetParameterType(message, ref prevRegisteredType))
-            {
-                if (prevRegisteredType!=null && parameterType!=null) {
-                    if(prevRegisteredType!=parameterType) throw new InvalidOperationException("check");
-                } else {
-                    if (prevRegisteredType != parameterType) throw new InvalidOperationException("check");
-                }
-            }
-        }
-
+        private readonly MessageToActionMap _messageToActionMap = new MessageToActionMap();
+        
         private void AddListener(Messages message, Delegate callback, Type parameterType)
         {
             if(callback==null) throw new ArgumentNullException(nameof(callback));
-            VerifyParameterType(message,parameterType);
             _messageToActionMap.AddAction(message,callback.Target,callback.Method,parameterType);
         }
 
@@ -50,18 +30,16 @@ namespace Libro {
 
         public void Broadcast(Messages message, object parameter)
         {
-            Type registeredParameter = null;
-            if (_messageToActionMap.TryGetParameterType(message, ref registeredParameter))
-                if(registeredParameter==null) throw new TargetParameterCountException($"Cannot pass a parameter with message `{ message }`. Registered actions(s) expect no parameter.)");
+            if (_messageToActionMap.TryGetParameterType(message, out var registeredParameter) && registeredParameter==null)
+                throw new TargetParameterCountException($"Cannot pass a parameter with message `{ message }`. Registered actions(s) expect no parameter.)");
             var actions = _messageToActionMap.GetActions(message);
             actions?.ForEach(a=> a.DynamicInvoke(parameter));
         }
 
         public void Broadcast(Messages message)
         {
-            Type regParamType = null;
-            if(_messageToActionMap.TryGetParameterType(message,ref regParamType))
-                if(regParamType!=null) throw new TargetParameterCountException($"Must pass a parameter of type { regParamType.FullName } with this message. Registered action(s) expect it.");
+            if(_messageToActionMap.TryGetParameterType(message,out var regParamType) && regParamType!=null)
+                throw new TargetParameterCountException($"Must pass a parameter of type { regParamType.FullName } with this message. Registered action(s) expect it.");
             var actions = _messageToActionMap.GetActions(message);
             actions?.ForEach(a=>a.DynamicInvoke());
         }
@@ -107,7 +85,7 @@ namespace Libro {
                 return actions;
             }
 
-            internal bool TryGetParameterType(Messages message, ref Type parameterType)
+            internal bool TryGetParameterType(Messages message, out Type parameterType)
             {
                 parameterType = null;
                 List<WeakAction> weakActions;
