@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Libro.Data;
 
 namespace Libro.Models
 {
@@ -20,9 +15,6 @@ namespace Libro.Models
         {
             return false;
         }
-        
-        private static bool _dbTypeSet;
-
 
         private NotificationTypes _NotificationType = NotificationTypes.Others;
 
